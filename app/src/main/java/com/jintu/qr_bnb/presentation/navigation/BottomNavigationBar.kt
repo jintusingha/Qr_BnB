@@ -19,6 +19,9 @@ fun AppBottomNavBarLabel(text: String) {
     Text(text = text)
 }
 
+// uri based navigation
+// we have to use data class based navigation
+
 @Composable
 fun BottomNavigationBar(navController: NavController) {
 

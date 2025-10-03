@@ -66,82 +66,83 @@ fun MenuTopBarContent(onBackClick: () -> Unit, onPlaceOrderClick: () -> Unit) {
     )
 }
 
-
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun MenuScreen(viewModel: MenuViewModel = hiltViewModel()) {
     val uiState by viewModel.menuState.collectAsState()
     val searchQuery by viewModel.searchQuery.collectAsState()
     val selectedTabIndex by viewModel.selectedTabIndex.collectAsState()
-
-
     val quantityMap = remember { mutableMapOf<String, Int>() }
 
-    LazyColumn(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(PrimaryBackground),
-        contentPadding = PaddingValues(vertical = 12.dp)
-    ) {
-        stickyHeader {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(PrimaryBackground)
-                    .padding(vertical = 8.dp)
-            ) {
-                MenuTopBarContent(
-                    onBackClick = { /* Handle navigation back */ },
-                    onPlaceOrderClick = { /* Handle place order action */ }
-                )
-                Spacer(modifier = Modifier.height(dimensionResource(R.dimen.height_medium)))
-
-
-                SearchBar(
-                    value = searchQuery,
-                    onValueChange = { viewModel.onSearchQueryChange(it) },
-                    placeholder = "Search for food",
-                    modifier = Modifier.padding(horizontal = dimensionResource(R.dimen.padding_medium))
-                )
-                Spacer(modifier = Modifier.height(dimensionResource(R.dimen.height_medium)))
-
-                MenuTabs(
-                    tabNames = uiState.tabNames,
-                    selectedTabIndex = selectedTabIndex,
-                    onTabSelected = { index -> viewModel.onTabSelected(index) }
-                )
-                Spacer(modifier = Modifier.height(dimensionResource(R.dimen.height_medium)))
-            }
-        }
-
-        items(uiState.courseList) { course ->
-            CourseItemRow(
-                course = course,
-                quantity = quantityMap[course.name] ?: 0,
-                onQuantityChange = { newQuantity ->
-                    quantityMap[course.name] = newQuantity
-                },
-                onAddToCart = {
-                    quantityMap[course.name] = 1
-                }
+    Scaffold(
+        topBar = {
+            MenuTopBarContent(
+                onBackClick = {  },
+                onPlaceOrderClick = { }
             )
-            Spacer(modifier = Modifier.height(dimensionResource(R.dimen.height_medium)))
-        }
+        },
+        containerColor = PrimaryBackground,
+        content = { padding ->
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(padding),
+                contentPadding = PaddingValues(vertical = 12.dp)
+            ) {
 
-        if (uiState.courseList.isEmpty()) {
-            item {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(200.dp),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text("Loading Menu...", color = Color.Gray)
+                stickyHeader {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .background(PrimaryBackground)
+                            .padding(vertical = 8.dp)
+                    ) {
+                        Spacer(modifier = Modifier.height(dimensionResource(R.dimen.height_medium)))
+
+                        SearchBar(
+                            value = searchQuery,
+                            onValueChange = { viewModel.onSearchQueryChange(it) },
+                            placeholder = "Search for food",
+                            modifier = Modifier.padding(horizontal = dimensionResource(R.dimen.padding_medium))
+                        )
+                        Spacer(modifier = Modifier.height(dimensionResource(R.dimen.height_medium)))
+
+                        MenuTabs(
+                            tabNames = uiState.tabNames,
+                            selectedTabIndex = selectedTabIndex,
+                            onTabSelected = { index -> viewModel.onTabSelected(index) }
+                        )
+                        Spacer(modifier = Modifier.height(dimensionResource(R.dimen.height_medium)))
+                    }
+                }
+
+                items(uiState.courseList) { course ->
+                    CourseItemRow(
+                        course = course,
+                        quantity = quantityMap[course.name] ?: 0,
+                        onQuantityChange = { newQuantity -> quantityMap[course.name] = newQuantity },
+                        onAddToCart = { quantityMap[course.name] = 1 }
+                    )
+                    Spacer(modifier = Modifier.height(dimensionResource(R.dimen.height_medium)))
+                }
+
+                if (uiState.courseList.isEmpty()) {
+                    item {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(200.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text("Loading Menu...", color = Color.Gray)
+                        }
+                    }
                 }
             }
         }
-    }
+    )
 }
+
 
 
 

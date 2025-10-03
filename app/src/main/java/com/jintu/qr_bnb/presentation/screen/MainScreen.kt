@@ -11,6 +11,7 @@ import com.jintu.qr_bnb.R
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -39,29 +40,27 @@ import com.jintu.qr_bnb.ui.theme.QRB_CartIcon
 fun MainScreen(viewModel: MainViewModel = viewModel()) {
     val mainData by viewModel.mainScreenData.observeAsState(initial = null)
 
-
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-
-                .background(PrimaryBackground)
-        ) {
-            LazyColumn(
-                modifier = Modifier.fillMaxSize(),
-                contentPadding = PaddingValues(dimensionResource(R.dimen.padding_medium))
+    Scaffold(
+        topBar = {
+            WelcomeTopBar()
+        },
+        containerColor = PrimaryBackground,
+        content = { padding ->
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(padding)
             ) {
-                item {
-                    WelcomeTopBar()
-                    Spacer(modifier = Modifier.height(dimensionResource(R.dimen.height_medium)))
-                }
-
-                mainData?.let { data ->
-                    items(data.categoryList) { category ->
-                        CategorySection(category = category)
-                        Spacer(modifier = Modifier.height(dimensionResource(R.dimen.height_large)))
-                    }
-                } ?: run {
-                    item {
+                LazyColumn(
+                    modifier = Modifier.fillMaxSize(),
+                    contentPadding = PaddingValues(dimensionResource(R.dimen.padding_medium))
+                ) {
+                    mainData?.let { data ->
+                        items(data.categoryList) { category ->
+                            CategorySection(category = category)
+                            Spacer(modifier = Modifier.height(dimensionResource(R.dimen.height_large)))
+                        }
+                    } ?: item {
                         Box(
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -74,7 +73,8 @@ fun MainScreen(viewModel: MainViewModel = viewModel()) {
                 }
             }
         }
-    }
+    )
+}
 
 
 @Composable
